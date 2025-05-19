@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>取引一覧</title>
+</head>
+<body>
+<h1>取引一覧</h1>
+<p><a th:href="@{/stocks/list}">銘柄一覧へ戻る</a></p>
+<p><a th:href="@{/layout-demo}">レイアウトへ戻る</a></p>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>銘柄ID</th>
+        <th>銘柄名称</th>
+        <th>取引日時</th>
+        <th>取引価格</th>
+        <th>入力日時</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="trade : ${trades}">
+        <td th:text="${trade.id}">1</td>
+        <td th:text="${trade.stock.id}">42</td>
+        <td th:text="${trade.stock.name}">Apple Inc.</td>
+        <td th:text="${trade.createdDatetime
+     .format(
+       T(java.time.format.DateTimeFormatter)
+         .ofPattern('yyyy-MM-dd HH:mm')
+     )
+}">2025-04-22 15:30
+        </td>
+        <td th:text="
+  ${trade.tradePrice
+      .setScale(2, T(java.math.RoundingMode).HALF_UP)
+      .toPlainString()
+  }">
+            150.25
+        </td>
+        <td th:text="${trade.inputTime.format(T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd HH:mm'))}">
+            2025-04-22 21:00
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

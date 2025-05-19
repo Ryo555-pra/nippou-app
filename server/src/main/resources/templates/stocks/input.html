@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>新規銘柄登録</title>
+</head>
+<body>
+<h1>新規銘柄登録</h1>
+<form th:action="@{/stocks}" th:object="${stockInputDto}" method="post">
+    <div>
+        <label for="ticker">Ticker:</label>
+        <input type="text" th:field="*{ticker}" id="ticker" required />
+    </div>
+    <div>
+        <label for="name">名称:</label>
+        <input type="text" th:field="*{name}" id="name" required />
+    </div>
+    <div>
+        <label for="market">Market:</label>
+        <input type="text" th:field="*{market}" id="market" required />
+    </div>
+    <div>
+        <label for="sharesIssued">発行株式数:</label>
+        <input type="number" th:field="*{sharesIssued}" id="sharesIssued" required />
+    </div>
+    <button type="submit">登録</button>
+</form>
+<p><a th:href="@{/stocks/list}">銘柄一覧へ戻る</a></p>
+<p><a th:href="@{/layout-demo}">レイアウトへ戻る</a></p>
+</body>
+</html>

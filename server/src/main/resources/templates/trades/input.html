@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>取引入力</title>
+</head>
+<body>
+<h1>取引入力</h1>
+<!-- コントローラで model.addAttribute("stock", stock); を渡しておく -->
+<p>
+    銘柄: <span th:text="${stock.ticker}">AAPL</span>
+    (<span th:text="${stock.name}">Apple Inc.</span>)
+</p>
+<form th:action="@{/trades}" th:object="${tradeInputDto}" method="post">
+    <input type="hidden" th:field="*{stockId}" />
+
+    <div>
+        <label for="createdDatetime">取引日時:</label>
+        <input type="datetime-local" th:field="*{createdDatetime}" id="createdDatetime" required />
+    </div>
+    <div>
+        <label for="tradePrice">取引価格:</label>
+        <input type="text" th:field="*{tradePrice}" id="tradePrice" required />
+    </div>
+    <button type="submit">登録</button>
+</form>
+<p><a th:href="@{/stocks/list}">取引一覧へ戻る</a></p>
+<p><a th:href="@{/layout-demo}">レイアウトへ戻る</a></p>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title> 取引入力 | trading-app</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div th:replace="~{layouts :: header}"></div>-->
+<!--<form method="post" th:object="${input}">-->
+<!--    <div>-->
+<!--        <label for="ticker">Ticker</label>-->
+<!--        <input type="text" id="ticker", th:field="*{ticker}" placeholder="××××">-->
+<!--        <div th;error="*{ticker}"></div>-->
+<!--    </div>-->
+<!--    <div>-->
+<!--        <label for="trated_date">Trated Date</label>-->
+<!--        <input type="datetime-local" id="trated_date", th:field="*{trated_date}" placeholder="××××/××/×× ××:××">-->
+<!--        <div th;error="*{trated_date}"></div>-->
+<!--    </div>-->
+<!--    <div>-->
+<!--        <label for="side">Side</label>-->
+<!--        <select id="side" th:field="*{side}">-->
+<!--            <option th:each="side : ${T(simplex.bn25._4.server.model.Side).values()}"-->
+<!--            th:value="${side.name()}" th:text="${side.name()}"></option>-->
+<!--        </select>-->
+<!--        <div th;error="*{side}"></div>-->
+<!--    </div>-->
+<!--    <div>-->
+<!--        <label for="quantity">Quantity</label>-->
+<!--        <input type="number" id="quantity", th:field="*{quantity}" placeholder="100000000" step="100">-->
+<!--        <div th;error="*{quantity}"></div>-->
+<!--    </div>-->
+<!--    <div>-->
+<!--        <label for="traded_price">Traded Price</label>-->
+<!--        <input type="number" id="traded_price", th:field="*{traded_price}" placeholder="100000000.00">-->
+<!--        <div th;error="*{traded_price}"></div>-->
+<!--    </div>-->
+
+
+<!--    <input type="submit" value="登録"/>-->
+<!--</form>-->
+<!--</body>-->

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>銘柄一覧</title>
+</head>
+<body>
+<h1>銘柄一覧</h1>
+<p><a th:href="@{/stocks/input}">▶ 新規銘柄登録</a></p>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Ticker</th>
+        <th>名称</th>
+        <th>Market</th>
+        <th>発行株式数</th>
+        <th>取引入力</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="stock : ${stocks}">
+        <td th:text="${stock.id}">1</td>
+        <td th:text="${stock.ticker}">AAPL</td>
+        <td th:text="${stock.name}">Apple Inc.</td>
+        <td th:text="${stock.market}">NASDAQ</td>
+        <td th:text="${#numbers.formatInteger(stock.sharesIssued, 1, 'COMMA')}">
+            <!-- 例: 1,234,567 -->
+        <td>
+            <a th:href="@{/trades/input/{stockId}(stockId=${stock.id})}">
+                Input Trade
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<p><a th:href="@{/layout-demo}">レイアウトへ戻る</a></p>
+</body>
+</html>

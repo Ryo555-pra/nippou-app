@@ -1,0 +1,61 @@
+ログイン方法　pwd:57685768aA
+    cd "C:\PostgreSQL\17\bin"
+    .\psql.exe -U postgres
+    ユーザー postgres のパスワード:
+
+    psql (17.4)
+    "help"でヘルプを表示します。
+
+    postgres=#
+
+
+実際にこの名前とパスワードで作ってしまった
+    postgres=# CREATE USER myuser WITH PASSWORD 'mypassword';
+    CREATE ROLE
+
+    CREATE DATABASE mydb OWNER myuser;
+
+
+
+pra01を作成した
+    postgres=# CREATE USER pra01 WITH PASSWORD 57685768aA;
+    ERROR:  "57685768aA"またはその近辺で数値リテラルの後ろにゴミがあります
+    行 1: CREATE USER pra01 WITH PASSWORD 57685768aA;
+                                          ^
+    postgres=# CREATE USER pra01 WITH PASSWORD '57685768aA';
+    CREATE ROLE
+    postgres=# \du
+                                           ロール一覧
+     ロール名 |                                     属性
+
+    ----------+------------------------------------------------------------------------------
+     myuser   |
+     postgres | スーパーユーザー, ロール作成可, DB作成可, レプリケーション可, RLS のバイパス
+     pra01    |
+
+
+    postgres=#
+
+    postgres=# CREATE DATABASE pra01db OWNER pra01
+    postgres-# ;
+
+
+
+-- 銘柄テーブル
+CREATE TABLE stock (
+    id              SERIAL        PRIMARY KEY,
+    ticker          VARCHAR(10)   NOT NULL UNIQUE,
+    name            VARCHAR(100)  NOT NULL,
+    market          VARCHAR(50)   NOT NULL,
+    shares_issued   BIGINT        NOT NULL
+);
+
+-- 取引テーブル
+CREATE TABLE trade (
+    id                SERIAL        PRIMARY KEY,
+    stock_id          INTEGER       NOT NULL REFERENCES stock(id),
+    created_datetime  TIMESTAMP     NOT NULL,          -- 取引日時
+    trade_price       NUMERIC(19,4) NOT NULL,          -- 取引価格
+    input_time        TIMESTAMP     NOT NULL DEFAULT NOW()  -- 登録日時
+);
+
