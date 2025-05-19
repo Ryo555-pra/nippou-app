@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${pageTitle}">株式取引アプリ</title>
+    <!-- 共通のCSSやJSをここで読み込む -->
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<header>
+    <h1>株式取引アプリケーション</h1>
+</header>
+
+<nav>
+    <ul>
+        <li><a th:href="@{/stocks/list}">銘柄一覧</a></li>
+        <li><a th:href="@{/stocks/input}">新規銘柄登録</a></li>
+        <li><a th:href="@{/trades/list}">取引一覧</a></li>
+    </ul>
+</nav>
+
+<main>
+    <!-- 子テンプレート側でこの部分を置き換え -->
+    <div th:fragment="content"></div>
+</main>
+
+<footer>
+    <p>&copy; 2025 株式取引Webアプリ</p>
+</footer>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<div th:fragment="header">-->
+<!--    <h1>trading-app-v2 by nakagawa102024</h1>-->
+<!--    <nav>-->
+<!--         <ul>-->
+<!--             <li><a th:href="@{/hello/innovation}"></a></li>-->
+<!--             <li><a th:href="@{/stocks}"></a></li>-->
+<!--             <li><a th:href="@{/trades}"></a></li>-->
+<!--             <li><a th:href="@{/stocks/new}"></a></li>-->
+<!--             <li><a th:href="@{/trades/new}"></a></li>-->
+<!--         </ul>-->
+<!--    </nav>-->
+<!--</div>-->
+<!--</html>-->
