@@ -7,6 +7,7 @@ import org.springframework.web.service.annotation.GetExchange;
 @Controller
 public class HelloController {
 
+
     @GetMapping("/hello")
     public String hello(){
         return "hello";

@@ -18,6 +18,8 @@ repositories {
 }
 
 dependencies {
+	implementation("org.springframework.boot:spring-boot-starter-security")
+
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 
@@ -35,7 +37,6 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	// PostgreSQL ドライバ
 	implementation("org.postgresql:postgresql:42.5.4")
-
 }
 
 tasks.withType<Test> {

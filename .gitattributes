@@ -1,0 +1,8 @@
+# すべてのテキストファイルはLFに統一
+* text=auto eol=lf
+
+# 特定のファイルだけ制御したい場合
+*.ts text eol=lf
+*.tsx text eol=lf
+*.java text eol=lf
+*.gradle text eol=lf

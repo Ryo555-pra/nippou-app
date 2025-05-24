@@ -1,0 +1,21 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+
+# Node (React)
+client/node_modules/
+client/dist/
+client/build/
+client/.env
+client/pnpm-lock.yaml
+
+# Gradle
+server/.gradle/
+server/build/
+*.log
+
+# Others
+.gitignore.txt
