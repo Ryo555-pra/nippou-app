@@ -82,6 +82,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import simplex.bn25._4.server.model.Report;
@@ -90,6 +91,7 @@ import simplex.bn25._4.server.service.ReportService;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/reports")
@@ -155,5 +157,60 @@ public class ReportController {
         public ReportStatus getStatus() { return status; }
         public void setStatus(ReportStatus status) { this.status = status; }
     }
+
+
+//    @GetMapping("/last-week")
+//    public ResponseEntity<List<ReportSummaryDTO>> lastWeek(
+//            @AuthenticationPrincipal Principal principal
+//    ) {
+//        String hrid = principal.getName();
+//        var list = service.findLastWeek(hrid)
+//                .stream()
+//                // T だけと日付だけを返す DTO に変換
+//                .map(r -> new ReportSummaryDTO(r.getReportDate(), r.getT()))
+//                .toList();
+//        return ResponseEntity.ok(list);
+//    }
+//
+//    public static record ReportSummaryDTO(
+//            @JsonFormat(pattern = "yyyy-MM-dd") LocalDate reportDate,
+//            String t
+//    ) {}
+//@GetMapping("/last-week")
+//public ResponseEntity<List<ReportSummaryDTO>> lastWeek(Authentication authentication) {
+//    // Authentication オブジェクトは必ず入るので null にはなりません
+//    String hrid = authentication.getName();
+//
+//    LocalDate end   = LocalDate.now();
+//    LocalDate start = end.minusDays(6);
+//    List<ReportSummaryDTO> list =
+//            service.findAllByHridAndDateBetween(hrid, start, end)
+//                    .stream()
+//                    .map(r -> new ReportSummaryDTO(r.getReportDate(), r.getT()))
+//                    .toList();
+//
+//    return ResponseEntity.ok(list);
+//}
+@GetMapping("/last-week")
+public ResponseEntity<List<ReportSummaryDTO>> lastWeek(Authentication authentication) {
+    // Authentication は必ず注入されるので NPE は避けられます
+    String hrid = authentication.getName();
+
+    LocalDate end   = LocalDate.now();
+    LocalDate start = end.minusDays(6);
+    List<Report> reports = service.findAllByHridAndDateBetween(hrid, start, end);
+
+    List<ReportSummaryDTO> summary = reports.stream()
+            .map(r -> new ReportSummaryDTO(r.getReportDate(), r.getT()))
+            .toList();
+
+    return ResponseEntity.ok(summary);
+}
+
+
+//    public record ReportSummaryDTO(
+//            @JsonFormat(pattern = "yyyy-MM-dd") LocalDate reportDate,
+//            String t
+//    ) {}
 }
 

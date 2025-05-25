@@ -84,6 +84,7 @@ import simplex.bn25._4.server.model.ReportStatus;
 import simplex.bn25._4.server.repository.ReportRepository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class ReportService {
@@ -120,5 +121,32 @@ public class ReportService {
         rpt.setStatus(status);
 
         return repo.save(rpt);
+    }
+
+
+    public List<Report> findLastWeek(String hrid) {
+        LocalDate end   = LocalDate.now();
+        LocalDate start = end.minusDays(6); // 今日を含む過去7日
+        return repo.findAllByHridAndReportDateBetweenOrderByReportDateAsc(hrid, start, end);
+    }
+
+//    /**
+//     * 指定した HRID かつ reportDate が start〜end の範囲内（両端 inclusive）
+//     * のレポートを取得し、日付昇順で返します。
+//     */
+//    public List<Report> findAllByHridAndDateBetween(String hrid, LocalDate start, LocalDate end) {
+//        return repo.findAllByHridAndReportDateBetweenOrderByReportDateAsc(hrid, start, end);
+//    }
+
+    /**
+     * 指定ユーザーの、reportDate が start〜end の範囲内のレポートを取得。
+     * (両端 inclusive, 日付昇順)
+     */
+    public List<Report> findAllByHridAndDateBetween(
+            String hrid,
+            LocalDate start,
+            LocalDate end
+    ) {
+        return repo.findAllByHridAndReportDateBetweenOrderByReportDateAsc(hrid, start, end);
     }
 }
