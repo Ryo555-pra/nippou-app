@@ -8,13 +8,20 @@ export default function PrivateRoute() {
   const [authed, setAuthed]   = useState(false)
   const location = useLocation()
 
-  useEffect(() => {
-    setChecking(true)
-    axios.get('/api/reports/whoami', { withCredentials: true })
-      .then(() => setAuthed(true))
-      .catch(() => setAuthed(false))
-      .finally(() => setChecking(false))
-  }, [location.pathname])
+//   useEffect(() => {
+//     setChecking(true)
+//     axios.get('/api/reports/whoami', { withCredentials: true })
+//       .then(() => setAuthed(true))
+//       .catch(() => setAuthed(false))
+//       .finally(() => setChecking(false))
+//   }, [location.pathname])
+// src/components/PrivateRoute.tsx から抜粋
+useEffect(() => {
+  axios.get('/api/auth/whoami', { withCredentials: true })
+    .then(() => setAuthed(true))
+    .catch(() => setAuthed(false))
+    .finally(() => setChecking(false));
+}, [location.pathname]);
 
   if (checking) {
     // 認証チェック完了前は何も描かない（フリッカー防止）

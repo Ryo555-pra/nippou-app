@@ -78,6 +78,8 @@ package simplex.bn25._4.server.controler;//package simplex.bn25._4.server.contro
 //
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -123,14 +125,21 @@ public class ReportController {
     /**
      * リクエスト JSON 用 DTO
      */
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ReportRequestDTO {
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+
+        /** yyyy-MM-dd 形式の文字列を LocalDate に変換 */
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         private LocalDate reportDate;
+
         private String curriculum;
         private String y;
         private String w;
         private String t;
         private ReportStatus status;
+
+        // Jackson のために no-args コンストラクタが必要
+        public ReportRequestDTO() {}
 
         // --- getters & setters ---
         public LocalDate getReportDate() { return reportDate; }

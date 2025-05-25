@@ -117,6 +117,7 @@ import ReportForm   from './pages/ReportForm'
 import CalendarView from './pages/CalendarView'
 import NotFound     from './pages/NotFound'
 import PrivateRoute from './components/PrivateRoute'
+import Login from './pages/Login'
 
 // 認証後にだけヘッダーを表示するレイアウト
 function AuthenticatedLayout() {
@@ -139,7 +140,7 @@ export default function App() {
       <Routes>
 
         {/* ① /login は公開。element={null} で React は何も描かず、Vite proxy が Spring の /login を返す */}
-        <Route path="/login" element={null} />
+        <Route path="/login" element={<Login />} />
 
         {/* ② ここから先は認証必須 */}
         <Route element={<PrivateRoute />}>
