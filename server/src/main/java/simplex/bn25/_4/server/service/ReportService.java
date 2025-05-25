@@ -1,49 +1,103 @@
 package simplex.bn25._4.server.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.stereotype.Service;
+//import simplex.bn25._4.server.model.Report;
+//import simplex.bn25._4.server.model.ReportStatus;
+//import simplex.bn25._4.server.repository.ReportRepository;
+//
+//import java.time.LocalDate;
+//import java.time.LocalDateTime;
+//import java.util.Optional;
+//
+//@Service
+//public class ReportService {
+//
+//    @Autowired
+//    private final ReportRepository reportRepository;
+//
+//    public ReportService(ReportRepository reportRepository) {
+//        this.reportRepository = reportRepository;
+//    }
+//
+//    public Optional<Report> getReport(String hrid, LocalDate date) {
+//        return reportRepository.findByHridAndReportDate(hrid, date);
+//    }
+//
+//    public Report submitReport(Report report) {
+//        report.setCreatedAt(LocalDateTime.now());
+//        return reportRepository.save(report);
+//    }
+//
+//    /**
+//     * 指定ユーザー・指定日の日報を保存または更新します。
+//     * 既に存在する場合はそのレコードを更新し、存在しなければ新規作成します。
+//     *
+//     * @param hrId        認証済みユーザーの HRID
+//     * @param reportDate  日報の日付
+//     * @param curriculum  カリキュラム欄のテキスト
+//     * @param y
+//     * @param w
+//     * @param t YWT フォーマット欄のテキスト
+//     * @param status      日報のステータス（NOT_SUBMITTED, SAVED_TEMPORARILY, SUBMITTED）
+//     * @return 保存後の Report エンティティ
+//     */
+//    public Report saveReport(
+//            String hrId,
+//            LocalDate reportDate,
+//            String curriculum,
+//            String y,
+//            String w,
+//            String t,
+//            ReportStatus status
+//    ) {
+//        // 1) 既存レポートを取得、なければ新規インスタンスを準備
+//        Report report = reportRepository
+//                .findByHridAndReportDate(hrId, reportDate)
+//                .orElseGet(() -> {
+//                    Report r = new Report();
+//                    r.setHrid(hrId);
+//                    r.setReportDate(reportDate);
+//                    return r;
+//                });
+//
+//        // 2) フィールドを上書き
+//        report.setCurriculum(curriculum);
+//        report.setY(y);
+//        report.setY(w);
+//        report.setY(t);
+//        report.setStatus(status);
+//
+//        // 3) DB に保存（INSERT or UPDATE）
+//        return reportRepository.save(report);
+//    }
+//}
+//
+
+
+
+
+
 import org.springframework.stereotype.Service;
 import simplex.bn25._4.server.model.Report;
 import simplex.bn25._4.server.model.ReportStatus;
 import simplex.bn25._4.server.repository.ReportRepository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class ReportService {
+    private final ReportRepository repo;
 
-    @Autowired
-    private final ReportRepository reportRepository;
-
-    public ReportService(ReportRepository reportRepository) {
-        this.reportRepository = reportRepository;
-    }
-
-    public Optional<Report> getReport(String hrid, LocalDate date) {
-        return reportRepository.findByHridAndReportDate(hrid, date);
-    }
-
-    public Report submitReport(Report report) {
-        report.setCreatedAt(LocalDateTime.now());
-        return reportRepository.save(report);
+    public ReportService(ReportRepository repo) {
+        this.repo = repo;
     }
 
     /**
-     * 指定ユーザー・指定日の日報を保存または更新します。
-     * 既に存在する場合はそのレコードを更新し、存在しなければ新規作成します。
-     *
-     * @param hrId        認証済みユーザーの HRID
-     * @param reportDate  日報の日付
-     * @param curriculum  カリキュラム欄のテキスト
-     * @param y
-     * @param w
-     * @param t YWT フォーマット欄のテキスト
-     * @param status      日報のステータス（NOT_SUBMITTED, SAVED_TEMPORARILY, SUBMITTED）
-     * @return 保存後の Report エンティティ
+     * 日報を新規 or 更新して保存します。
      */
     public Report saveReport(
-            String hrId,
+            String hrid,
             LocalDate reportDate,
             String curriculum,
             String y,
@@ -51,25 +105,20 @@ public class ReportService {
             String t,
             ReportStatus status
     ) {
-        // 1) 既存レポートを取得、なければ新規インスタンスを準備
-        Report report = reportRepository
-                .findByHridAndReportDate(hrId, reportDate)
+        Report rpt = repo.findByHridAndReportDate(hrid, reportDate)
                 .orElseGet(() -> {
                     Report r = new Report();
-                    r.setHrid(hrId);
+                    r.setHrid(hrid);
                     r.setReportDate(reportDate);
                     return r;
                 });
 
-        // 2) フィールドを上書き
-        report.setCurriculum(curriculum);
-        report.setY(y);
-        report.setY(w);
-        report.setY(t);
-        report.setStatus(status);
+        rpt.setCurriculum(curriculum);
+        rpt.setY(y);
+        rpt.setW(w);
+        rpt.setT(t);
+        rpt.setStatus(status);
 
-        // 3) DB に保存（INSERT or UPDATE）
-        return reportRepository.save(report);
+        return repo.save(rpt);
     }
 }
-
