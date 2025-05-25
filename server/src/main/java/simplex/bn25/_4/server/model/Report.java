@@ -1,10 +1,12 @@
 package simplex.bn25._4.server.model;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * 日報エンティティ
+ */
 @Entity
 @Table(name = "reports")
 public class Report {
@@ -13,35 +15,45 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String hrid;
+    @Column(nullable = false)
+    private String hrid;              // トレーニーのHRID
 
-    private LocalDate reportDate;
+    @Column(nullable = false)
+    private LocalDate reportDate;     // 日報の日付
 
-    @Column(length = 3000)
-    private String curriculum;
+    @Column(columnDefinition = "TEXT")
+    private String curriculum;        // カリキュラム記入欄
 
-    @Column(length = 1000)
-    private String y;
+    @Column(columnDefinition = "TEXT")
+    private String y;                 // Y: やったこと
 
-    @Column(length = 1000)
-    private String w;
+    @Column(columnDefinition = "TEXT")
+    private String w;                 // W: わかったこと
 
-    @Column(length = 1000)
-    private String t;
+    @Column(columnDefinition = "TEXT")
+    private String t;                 // T: 次にすること
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ReportStatus status;      // ステータス
 
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ReportStatus status = ReportStatus.NOT_SUBMITTED;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+// --- Getter / Setter ---
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getHrid() {
@@ -68,20 +80,20 @@ public class Report {
         this.curriculum = curriculum;
     }
 
-    public String getW() {
-        return w;
-    }
-
-    public void setW(String w) {
-        this.w = w;
-    }
-
     public String getY() {
         return y;
     }
 
     public void setY(String y) {
         this.y = y;
+    }
+
+    public String getW() {
+        return w;
+    }
+
+    public void setW(String w) {
+        this.w = w;
     }
 
     public String getT() {
@@ -99,12 +111,6 @@ public class Report {
     public void setStatus(ReportStatus status) {
         this.status = status;
     }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }
+
+

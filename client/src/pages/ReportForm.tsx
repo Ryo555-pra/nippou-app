@@ -41,13 +41,12 @@ export default function ReportForm() {
 
   const navigate = useNavigate(); // ← 遷移用フック
 
- // 初回マウントで「GET /api/reports?date=...」を投げて既存データを読み込む
-   useEffect(() => {
-  axios
-      .get<Report>('/api/reports', {
-        params: { date },
-        withCredentials: true
-      })
+  // 初回マウントで GET /api/reports?date=...
+  useEffect(() => {
+    axios.get<Report>('/api/reports', {
+      params: { date },
+      withCredentials: true
+    })
       .then(res => {
         // 200 OK なら既存レポートをセット
         setCurriculum(res.data.curriculum);
@@ -68,8 +67,6 @@ export default function ReportForm() {
       });
   }, [date]);
 
-  // フォーム送信ハンドラ (POST /api/reports)
-  
   
     // 2) フォーム送信時に POST /api/reports
   const handleSubmit = async (e: React.FormEvent) => {

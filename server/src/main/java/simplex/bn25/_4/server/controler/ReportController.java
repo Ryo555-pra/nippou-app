@@ -13,7 +13,6 @@ import simplex.bn25._4.server.service.ReportService;
 
 import java.security.Principal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/reports")
@@ -32,14 +31,6 @@ public class ReportController {
     public ResponseEntity<String> whoAmI(Authentication authentication) {
         return ResponseEntity.ok(authentication.getName()); // → "trainee01"
     }
-
-//    @PostMapping
-//    public ResponseEntity<Report> submitReport(@RequestBody Report report, Authentication auth) {
-//        String hrid = auth.getName(); // ← ログインユーザー名
-//        report.setHrid(hrid);
-//        report.setCreatedAt(LocalDateTime.now());
-//        return ResponseEntity.ok(reportRepository.save(report));
-//    }
 
     @PostMapping
     public ResponseEntity<Report> postReport(
