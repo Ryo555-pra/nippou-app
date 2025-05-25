@@ -124,7 +124,7 @@ function AuthenticatedLayout() {
   return (
     <>
       <nav style={{ padding: '10px', display: 'flex', gap: '10px' }}>
-        <a href="/"><button>ホーム</button></a>
+        <a href="/"><button>TODO</button></a>
         <a href="/reports"><button>日報一覧</button></a>
         <a href="/reports/new"><button>日報登録</button></a>
         <a href="/calendar"><button>カレンダー</button></a>
