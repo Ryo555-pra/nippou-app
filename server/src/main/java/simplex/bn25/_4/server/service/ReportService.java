@@ -85,6 +85,7 @@ import simplex.bn25._4.server.repository.ReportRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReportService {
@@ -94,9 +95,9 @@ public class ReportService {
         this.repo = repo;
     }
 
-    /**
-     * 日報を新規 or 更新して保存します。
-     */
+//    /**
+//     * 日報を新規 or 更新して保存します。
+//     */
     public Report saveReport(
             String hrid,
             LocalDate reportDate,
@@ -130,6 +131,37 @@ public class ReportService {
         return repo.findAllByHridAndReportDateBetweenOrderByReportDateAsc(hrid, start, end);
     }
 
+//    /**
+//     * 日報を保存または更新します。
+//     * （既存の saveReport メソッドなどがある場合は省略可）
+//     */
+//    public Report saveReport(
+//            String hrid,
+//            LocalDate reportDate,
+//            String curriculum,
+//            String y,
+//            String w,
+//            String t,
+//            ReportStatus status
+//    ) {
+//        // 省略: DTO→Entity変換、Repository.save() 呼び出し など
+//    }
+
+    /**
+     * 指定したユーザー(hrid)と日付のレポートを取得します。
+     * 見つかれば Optional.of(report)、なければ Optional.empty() が返ります。
+     */
+    public Optional<Report> getReport(String hrid, LocalDate date) {
+        return repo.findByHridAndReportDate(hrid, date);
+    }
+
+//    /**
+//     * 過去1週間分などを一覧取得するメソッド例。
+//     */
+//    public List<Report> findAllByHridAndDateBetween(String hrid, LocalDate start, LocalDate end) {
+//        return repo.findAllByHridAndReportDateBetweenOrderByReportDateAsc(hrid, start, end);
+//    }
+//
 //    /**
 //     * 指定した HRID かつ reportDate が start〜end の範囲内（両端 inclusive）
 //     * のレポートを取得し、日付昇順で返します。

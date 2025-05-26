@@ -13,7 +13,7 @@ export default function Home() {
   const [error,   setError]   = useState<string>()
 
   useEffect(() => {
-    axios.get<Summary[]>('/api/reports/last-week', { withCredentials: true })
+    axios.get<Summary[]>('/api/reports/last-week/t', { withCredentials: true })
       .then(res => setItems(res.data))
       .catch(err => setError('取得に失敗しました'))
       .finally(() => setLoading(false))
