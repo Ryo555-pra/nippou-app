@@ -8,18 +8,23 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import simplex.bn25._4.server.model.Report;
 import simplex.bn25._4.server.model.ReportStatus;
+import simplex.bn25._4.server.model.TaskEvaluation;
 import simplex.bn25._4.server.service.ReportService;
+import simplex.bn25._4.server.service.TaskEvaluationService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/reports")
 public class ReportController {
     private final ReportService service;
+    private final TaskEvaluationService evalService;
 
-    public ReportController(ReportService service) {
+    public ReportController(ReportService service, TaskEvaluationService evalService) {
         this.service = service;
+        this.evalService = evalService;
     }
 
     /**
@@ -144,14 +149,61 @@ public class ReportController {
         return ResponseEntity.ok(summary);
     }
 
+    // タスク一覧（改行つき文字列 t を返す）
     @GetMapping("/last-week/t")
-    public ResponseEntity<List<ReportSummaryDTO>> tSummary(Authentication auth) {
+    public List<ReportSummaryDTO> lastWeekTasks(Authentication auth) {
         String hrid = auth.getName();
-        List<ReportSummaryDTO> list = service.findLastWeek(hrid).stream()
-                // t をセット、curriculum は null
+        LocalDate end = LocalDate.now();
+        LocalDate start = end.minusDays(6);
+        return service.findAllByHridAndDateBetween(hrid, start, end).stream()
                 .map(r -> new ReportSummaryDTO(r.getReportDate(), null, r.getT()))
                 .toList();
+    }
+
+    /**
+     * ① タスクごとの自己評価を保存する
+     */
+    @PostMapping("/{date}/scores")
+    public ResponseEntity<Void> saveScores(
+            Authentication auth,
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestBody List<TaskEvaluationService.TaskScoreDTO> scores
+    ) {
+        String hrid = auth.getName();
+        evalService.saveEvaluations(hrid, date, scores);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * ② 過去一週間分のタスク評価を取得して返す
+     */
+    @GetMapping("/last-week/tasks")
+    public ResponseEntity<List<SummaryWithScoreDTO>> lastWeekWithScores(
+            Authentication auth
+    ) {
+        String hrid = auth.getName();
+        List<TaskEvaluation> evs = evalService.findLastWeekEvaluations(hrid);
+
+        // DTO に詰め替え
+        List<SummaryWithScoreDTO> list = evs.stream()
+                .map(ev -> new SummaryWithScoreDTO(
+                        ev.getReportDate(),
+                        ev.getTaskIndex(),
+                        ev.getScore()
+                ))
+                .collect(Collectors.toList());
+
         return ResponseEntity.ok(list);
+    }
+
+    /**
+     * レスポンス用 DTO
+     **/
+    public static record SummaryWithScoreDTO(
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
+            int taskIndex,
+            int score
+    ) {
     }
 }
 
