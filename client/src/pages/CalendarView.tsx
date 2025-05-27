@@ -2,28 +2,59 @@
 
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-type DateValue = Date | null;
+type StatusMap = Record<
+  string,             // '2025-05-19' のような YYYY-MM-DD
+  'SUBMITTED'|'SAVED_TEMPORARILY'|'NOT_SUBMITTED'
+>
 
 export default function CalendarView() {
-  const [value, setValue] = useState<Date>(new Date());
+  const [value, setValue] = useState(new Date());
+  const [statusMap, setStatusMap] = useState<StatusMap>({})
   const navigate = useNavigate();
 
-  // 仮：提出済みの日付（将来はAPIから取得予定）
-  const submittedDates = ['2025-05-19', '2025-05-17'];
+  // １．過去１週間分を取りにいく
+  useEffect(() => {
+    axios.get< { reportDate:string; t:string }[]>('/api/reports/last-week', {
+      withCredentials: true
+    })
+    .then(res => {
+      const m: StatusMap = {}
+      res.data.forEach(r => {
+        // 今回は「GET /last-week」は T と日付しか返さないので
+        // status は持ってない。status付けたいならコントローラ側を拡張
+        // 例: ReportSummaryDTO に status フィールドを足す
+        m[r.reportDate] = 'SUBMITTED'
+      })
+      setStatusMap(m)
+    })
+    .catch(() => {
+      // エラー時は全部 NOT_SUBMITTED のまま
+    })
+  }, [])
 
-  // 日付フォーマット YYYY-MM-DD に変換
-  const formatDate = (date: Date) =>
-    // date.toISOString().split('T')[0];
-    date.toLocaleDateString('sv-SE');
+  // tile ごとにマークを描画
+  const tileContent = ({ date }: { date: Date }) => {
+    const key = date.toLocaleDateString('sv-SE')
+    const st = statusMap[key] ?? 'NOT_SUBMITTED'
+    return (
+      <div style={{ fontSize:'0.7em' }}>
+        { st==='SUBMITTED'           ? '✅'
+        : st==='SAVED_TEMPORARILY'   ? '🟡'
+        :           '❌' }
+      </div>
+    )
+  }
 
-const handleDateClick = (date: Date) => {
-    setValue(date);
-    const formatted = formatDate(date);
-    navigate(`/reports/new?date=${formatted}`);
-  };
+  // クリックで ReportForm へ遷移
+  const handleDateClick = (date: Date) => {
+    setValue(date)
+    const d = date.toLocaleDateString('sv-SE')
+    navigate(`/reports/new?date=${d}`)
+  }
 
   return (
     <div>
@@ -31,16 +62,9 @@ const handleDateClick = (date: Date) => {
       <Calendar
         onClickDay={handleDateClick}
         value={value}
-        tileContent={({ date }) => {
-          const dateStr = formatDate(date);
-          if (submittedDates.includes(dateStr)) {
-            return <div style={{ fontSize: '0.7em', color: 'green' }}>✅</div>;
-          } else {
-            return <div style={{ fontSize: '0.7em', color: 'red' }}>❌</div>;
-          }
-        }}
+        tileContent={tileContent}
       />
-      <p>選択された日: {value?.toDateString()}</p>
+      <p>選択された日: {value.toDateString()}</p>
     </div>
-  );
+  )
 }
