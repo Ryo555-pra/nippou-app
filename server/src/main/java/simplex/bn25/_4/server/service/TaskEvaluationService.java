@@ -4,6 +4,7 @@ package simplex.bn25._4.server.service;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import simplex.bn25._4.server.model.TaskEvaluation;
+import simplex.bn25._4.server.repository.TaskEvaluationDao;
 import simplex.bn25._4.server.repository.TaskEvaluationRepository;
 
 import java.time.LocalDate;
@@ -13,10 +14,10 @@ import java.util.List;
 @Transactional
 public class TaskEvaluationService {
 
-    private final TaskEvaluationRepository repo;
+    private final TaskEvaluationDao dao;
 
-    public TaskEvaluationService(TaskEvaluationRepository repo) {
-        this.repo = repo;
+    public TaskEvaluationService(TaskEvaluationDao dao) {
+        this.dao = dao;
     }
 
     /**
@@ -28,18 +29,7 @@ public class TaskEvaluationService {
             List<TaskScoreDTO> scores
     ) {
         for (TaskScoreDTO dto : scores) {
-            var opt = repo.findByHridAndReportDateAndTaskIndex(
-                    hrid, reportDate, dto.taskIndex()
-            );
-            TaskEvaluation ev = opt.orElseGet(() -> {
-                TaskEvaluation e = new TaskEvaluation();
-                e.setHrid(hrid);
-                e.setReportDate(reportDate);
-                e.setTaskIndex(dto.taskIndex());
-                return e;
-            });
-            ev.setScore(dto.score());
-            repo.save(ev);
+            dao.upsertEvaluation(hrid, reportDate, dto.taskIndex(), dto.score());
         }
     }
 
@@ -49,9 +39,7 @@ public class TaskEvaluationService {
     public List<TaskEvaluation> findLastWeekEvaluations(String hrid) {
         LocalDate end   = LocalDate.now();
         LocalDate start = end.minusDays(6);
-        return repo.findAllByHridAndReportDateBetweenOrderByReportDateAscTaskIndexAsc(
-                hrid, start, end
-        );
+        return  dao.findBetween(hrid, start, end);
     }
 
     /** DTO for incoming scores **/
