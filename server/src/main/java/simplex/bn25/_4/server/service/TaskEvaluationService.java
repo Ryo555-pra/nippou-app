@@ -5,7 +5,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import simplex.bn25._4.server.model.TaskEvaluation;
 import simplex.bn25._4.server.repository.TaskEvaluationDao;
-import simplex.bn25._4.server.repository.TaskEvaluationRepository;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -1,13 +1,13 @@
 package simplex.bn25._4.server.controler;//package simplex.bn25._4.server.controler;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import simplex.bn25._4.server.dto.ReportRequestDTO;
+import simplex.bn25._4.server.dto.ReportSummaryDTO;
+import simplex.bn25._4.server.dto.SummaryWithScoreDTO;
 import simplex.bn25._4.server.model.Report;
-import simplex.bn25._4.server.model.ReportStatus;
 import simplex.bn25._4.server.model.TaskEvaluation;
 import simplex.bn25._4.server.service.ReportService;
 import simplex.bn25._4.server.service.TaskEvaluationService;
@@ -48,104 +48,21 @@ public class ReportController {
             @RequestBody ReportRequestDTO dto
     ) {
         String hrid = auth.getName();
-        Report saved = service.saveReport(
-                hrid,
-                dto.getReportDate(),
-                dto.getCurriculum(),
-                dto.getY(),
-                dto.getW(),
-                dto.getT(),
-                dto.getStatus()
-        );
+        // ServiceにDTOとhridを渡すだけにする
+        Report saved = service.saveReport(dto, hrid);
         return ResponseEntity.ok(saved);
     }
 
-    /**
-     * リクエスト JSON 用 DTO
-     */
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class ReportRequestDTO {
-
-        /**
-         * yyyy-MM-dd 形式の文字列を LocalDate に変換
-         */
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-        private LocalDate reportDate;
-
-        private String curriculum;
-        private String y;
-        private String w;
-        private String t;
-        private ReportStatus status;
-
-        // Jackson のために no-args コンストラクタが必要
-        public ReportRequestDTO() {
-        }
-
-        // --- getters & setters ---
-        public LocalDate getReportDate() {
-            return reportDate;
-        }
-
-        public void setReportDate(LocalDate reportDate) {
-            this.reportDate = reportDate;
-        }
-
-        public String getCurriculum() {
-            return curriculum;
-        }
-
-        public void setCurriculum(String curriculum) {
-            this.curriculum = curriculum;
-        }
-
-        public String getY() {
-            return y;
-        }
-
-        public void setY(String y) {
-            this.y = y;
-        }
-
-        public String getW() {
-            return w;
-        }
-
-        public void setW(String w) {
-            this.w = w;
-        }
-
-        public String getT() {
-            return t;
-        }
-
-        public void setT(String t) {
-            this.t = t;
-        }
-
-        public ReportStatus getStatus() {
-            return status;
-        }
-
-        public void setStatus(ReportStatus status) {
-            this.status = status;
-        }
-    }
-
-
     @GetMapping("/last-week")
     public ResponseEntity<List<ReportSummaryDTO>> lastWeek(Authentication authentication) {
-        // Authentication は必ず注入されるので NPE は避けられます
         String hrid = authentication.getName();
-
         LocalDate end = LocalDate.now();
         LocalDate start = end.minusDays(6);
+        // ServiceはEntityリストを返す。DTO変換はControllerで行う
         List<Report> reports = service.findAllByHridAndDateBetween(hrid, start, end);
-
         List<ReportSummaryDTO> summary = reports.stream()
                 .map(r -> new ReportSummaryDTO(r.getReportDate(), r.getCurriculum(), null))
                 .toList();
-
         return ResponseEntity.ok(summary);
     }
 
@@ -155,6 +72,7 @@ public class ReportController {
         String hrid = auth.getName();
         LocalDate end = LocalDate.now();
         LocalDate start = end.minusDays(6);
+        // ServiceはEntityリストを返す。DTO変換はControllerで行う
         return service.findAllByHridAndDateBetween(hrid, start, end).stream()
                 .map(r -> new ReportSummaryDTO(r.getReportDate(), null, r.getT()))
                 .toList();
@@ -194,16 +112,6 @@ public class ReportController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(list);
-    }
-
-    /**
-     * レスポンス用 DTO
-     **/
-    public static record SummaryWithScoreDTO(
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
-            int taskIndex,
-            int score
-    ) {
     }
 }
 

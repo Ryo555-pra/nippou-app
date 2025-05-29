@@ -21,8 +21,8 @@ export default function Login() {
         withCredentials: true,
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
-      // ログイン成功 → カレンダーへ遷移
-      navigate('/calendar')
+      // ログイン成功 → TODO: トップページへリダイレクト
+      navigate('/')
     } catch {
       setError('認証に失敗しました')
     }
